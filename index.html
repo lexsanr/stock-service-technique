@@ -8,26 +8,64 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <style>
     body { font-family: Arial; text-align: center; padding: 20px; }
-    button, a { display: block; width: 100%; padding: 15px; margin-top: 15px;
+    button, a {
+      display: block; width: 100%; padding: 15px; margin-top: 15px;
       box-sizing: border-box; background: #234b36; color: white;
-      border: 0; border-radius: 6px; font-size: 16px; text-decoration: none; }
+      border: 0; border-radius: 6px; font-size: 16px; text-decoration: none;
+    }
+    input {
+      width: 100%; padding: 15px; margin-top: 10px;
+      box-sizing: border-box; font-size: 16px;
+    }
     #reader { width: 100%; max-width: 400px; margin: 20px auto; }
   </style>
 </head>
 <body>
   <h2>Stock – Service technique</h2>
+
   <button id="start" onclick="demarrer()">📷 Ouvrir la caméra</button>
+
   <div id="reader"></div>
+
+  <p>OU</p>
+
+  <h3>Produit sans code-barres ?</h3>
+  <input id="reference" placeholder="Saisir la référence (ex. P003)">
+  <button onclick="ouvrirFiche(document.getElementById('reference').value)">
+    Rechercher le produit
+  </button>
+
   <p id="resultat">Prêt à scanner.</p>
-  <a id="fiche" hidden target="_blank" rel="noopener">Ouvrir la fiche produit</a>
+  <a id="fiche" hidden target="_blank" rel="noopener">
+    Ouvrir la fiche produit
+  </a>
 
 <script>
   const APP_URL = "https://script.google.com/macros/s/AKfycbzxzKxRJ-qY73ns-wPvcJTMLCbpTH-5qvxRcFVOXCuID0fUAX167pQ5aXmWBn9GGTxy/exec";
   let scanner;
 
+  function ouvrirFiche(code) {
+    code = code.trim();
+
+    if (!code) {
+      document.getElementById("resultat").textContent =
+        "Saisissez une référence.";
+      return;
+    }
+
+    const lien = document.getElementById("fiche");
+    lien.href = APP_URL + "?code=" + encodeURIComponent(code);
+    lien.hidden = false;
+
+    document.getElementById("resultat").textContent =
+      "Référence saisie : " + code;
+  }
+
   function demarrer() {
     document.getElementById("fiche").hidden = true;
-    document.getElementById("resultat").textContent = "Recherche du code-barres...";
+    document.getElementById("resultat").textContent =
+      "Recherche du code-barres...";
+
     scanner = new Html5Qrcode("reader");
 
     scanner.start(
@@ -35,11 +73,10 @@
       { fps: 10, qrbox: { width: 250, height: 150 } },
       function(code) {
         scanner.stop();
-        document.getElementById("resultat").textContent = "Code détecté : " + code;
-
-        const lien = document.getElementById("fiche");
-        lien.href = APP_URL + "?code=" + encodeURIComponent(code);
-        lien.hidden = false;
+        document.getElementById("reference").value = code;
+        document.getElementById("resultat").textContent =
+          "Code détecté : " + code;
+        ouvrirFiche(code);
       }
     ).catch(function() {
       document.getElementById("resultat").textContent =
