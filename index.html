@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock - Service technique</title>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 450px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    h2 { text-align: center; }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 9px;
+      font-size: 17px;
+      background: #2563eb;
+      color: white;
+    }
+
+    #reader {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    #resultat {
+      margin-top: 15px;
+      padding: 12px;
+      background: #eff6ff;
+      border-radius: 8px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>📦 STOCK SERVICE TECHNIQUE</h2>
+    <p style="text-align:center">Test de la caméra</p>
+
+    <button onclick="demarrerScan()">📷 OUVRIR LA CAMÉRA</button>
+
+    <div id="reader"></div>
+    <div id="resultat">Prêt à scanner.</div>
+  </div>
+
+  <script>
+    let scanner;
+
+    async function demarrerScan() {
+      const resultat = document.getElementById("resultat");
+
+      try {
+        resultat.innerText = "Demande d'accès à la caméra...";
+
+        scanner = new Html5Qrcode("reader");
+
+        await scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 150 } },
+          code => {
+            resultat.innerText = "Code détecté : " + code;
+            scanner.stop();
+          }
+        );
+
+        resultat.innerText = "Caméra ouverte ! Présente un code-barres.";
+
+      } catch (e) {
+        resultat.innerText =
+          "Erreur : " + e.name + " - " + e.message;
+      }
+    }
+  </script>
+</body>
+</html>
