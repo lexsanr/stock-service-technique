@@ -1,0 +1,15 @@
+{
+  "name": "Stock - Scanner",
+  "short_name": "Stock",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1b4332",
+  "icons": [
+    {
+      "src": "./image_36bf3497.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg"
+    }
+  ]
+}
